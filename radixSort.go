@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 )
 
-// RadixSortBinary is radix sort for 64 bit unsigned integers implemented using binary data.
+// RadixSort is radix sort for 64 bit unsigned integers implemented using binary data.
 // This algorithm does not compare the data and due to the binary implementation also does not perform any calculations with it.
 // It is faster than quicksort but cannot handle negative values.
 func RadixSort(items []uint64) []uint64 {
