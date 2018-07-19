@@ -46,7 +46,14 @@ Insertion Sort
 Insertion sort is a sorting algorithm that works by inserting individual items at the right position, keeping the existing set sorted.
 It can be used to sort a set by starting with only one value in the sorted set but is much better suited for inserting a single new element into a sorted set.
 
-Insertion Sort is still WIP.
+```go
+sort.InsertionSort(set []int) []int
+sort.InsertSorted(sortedSet []int, insert int) []int
+```
+
+Due to inferior speed compared to all other algorithms in this package I would not recommend using Insertion sort for anything else than sorting negative elements while preserving the order of elements of equal value.
+
+Insert is intended to be used when adding one new element as may occur when adding a new item to a database.
 
 Example / Tests / Benchmark
 ---------------------------

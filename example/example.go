@@ -11,6 +11,12 @@ import (
 )
 
 func main() {
+	fmt.Println("Testing insert: ")
+	s := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	o := localsort.InsertSorted(s, -1)
+	fmt.Println("Result: ", o, " Original: ", s)
+	fmt.Println()
+
 	testSort(10)
 	fmt.Println()
 	testSort(100)
@@ -44,6 +50,10 @@ func testSort(amount int) {
 	for i := 0; i < amount; i++ {
 		ints2[i] = ints[i]
 	}
+	ints3 := make([]int, amount)
+	for i := 0; i < amount; i++ {
+		ints3[i] = ints[i]
+	}
 	numbers := make([]uint64, amount)
 	for i := 0; i < amount; i++ {
 		numbers[i] = uint64(ints[i])
@@ -64,7 +74,12 @@ func testSort(amount int) {
 	res2 := localsort.QuickSort(ints2)
 	duration = time.Since(start)
 	fmt.Println("Quicksort sorted ", amount, " in ", duration.String())
+	start = time.Now()
+	res3 := localsort.InsertionSort(ints3)
+	duration = time.Since(start)
+	fmt.Println("Insertion sorted ", amount, " in ", duration.String())
 	fmt.Println("Success:")
 	fmt.Println("Radix: ", reflect.DeepEqual(ints, radixResult))
 	fmt.Println("QuickSort: ", reflect.DeepEqual(ints, res2))
+	fmt.Println("Insertion: ", reflect.DeepEqual(ints, res3))
 }
