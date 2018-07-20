@@ -3,7 +3,7 @@ Sort
 
 This package contains implementations of Radix Sort, Quicksort and Merge Sort in Golang.
 They are licensed under the Boost Software License 1.0.
-Benchmark results are included in benchmark.txt.
+Benchmark results are included in benchmark.md.
 
 Radix Sort
 ----------
@@ -38,7 +38,15 @@ Merge Sort
 Merge sort is an algorithm that sorts sets by dividing them and sorting them while merging them together.
 It is slower than Quicksort but can be especially useful when merging multiple sets of sorted data which may occur when distributing sorting across devices.
 
-Merge Sort is still WIP.
+```go
+sort.MergeSort(set []int) []int
+sort.MergeSortedSets(set1 []int, set2 []int) []int
+```
+
+Merge sort is a stable sorting algorithm that handles negative values and should therefore be preferred over Quicksort when you need to preserve the order of equal elements.
+Due to keeping up to 2 copies of the full set in memory, it is not recommended to use Merge sort in constrained environments.
+
+Merge sorted sets is intended to be used to merge two sorted sets together. It is used by Merge sort internally but can also be used to merge the results of multi-threaded or distributed sorting algorithms.
 
 Insertion Sort
 --------------
@@ -51,7 +59,7 @@ sort.InsertionSort(set []int) []int
 sort.InsertSorted(sortedSet []int, insert int) []int
 ```
 
-Due to inferior speed compared to all other algorithms in this package I would not recommend using Insertion sort for anything else than sorting negative elements while preserving the order of elements of equal value.
+Due to inferior speed compared to all other algorithms in this package I would not recommend using Insertion sort for normal applications. If you don't know about a reason to use it you probably shouldn't.
 
 Insert is intended to be used when adding one new element as may occur when adding a new item to a database.
 
