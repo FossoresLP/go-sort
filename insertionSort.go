@@ -1,5 +1,7 @@
 package sort
 
+// InsertionSort is an implementation of the Insertion sort algorithm.
+// It is extremely slow compared to other algorithms like Quicksort, Merge sort and Radix sort and should therefore only be used for very small sets.
 func InsertionSort(sort []int) []int {
 	l := len(sort)
 	sorted := make([]int, l)
@@ -12,6 +14,8 @@ func InsertionSort(sort []int) []int {
 	return sorted
 }
 
+// InsertSorted inserts a single element into a sorted set.
+// This can be useful when inserting a new element into a database.
 func InsertSorted(sorted []int, insert int) []int {
 	l := len(sorted)
 	out := append(sorted, insert)
