@@ -3,8 +3,96 @@ Benchmark results
 
 This file contains the output of example/example.go run on an i7 3770k with 16GB of RAM.
 
-Current version
+Current results
 ---------------
+
+Radix sorted  10  in  10.167µs
+Sort sorted  10  in  2.22µs
+Quicksort sorted  10  in  1.624µs
+Insertion sorted  10  in  476ns
+Merge sorted  10  in  890ns
+Success:
+Radix:  true
+QuickSort:  true
+Insertion:  true
+Merge:  true
+
+Radix sorted  100  in  6.517µs
+Sort sorted  100  in  15.09µs
+Quicksort sorted  100  in  10.403µs
+Insertion sorted  100  in  11.817µs
+Merge sorted  100  in  22.652µs
+Success:
+Radix:  true
+QuickSort:  true
+Insertion:  true
+Merge:  true
+
+Radix sorted  1000  in  64.092µs
+Sort sorted  1000  in  178.735µs
+Quicksort sorted  1000  in  105.591µs
+Insertion sorted  1000  in  582.955µs
+Merge sorted  1000  in  187.103µs
+Success:
+Radix:  true
+QuickSort:  true
+Insertion:  true
+Merge:  true
+
+Radix sorted  10000  in  583.762µs
+Sort sorted  10000  in  2.327078ms
+Quicksort sorted  10000  in  1.243841ms
+Insertion sorted  10000  in  34.99612ms
+Merge sorted  10000  in  1.210353ms
+Success:
+Radix:  true
+QuickSort:  true
+Insertion:  true
+Merge:  true
+
+Radix sorted  100000  in  3.553859ms
+Sort sorted  100000  in  18.349581ms
+Quicksort sorted  100000  in  7.81994ms
+Insertion sorted  100000  in  3.234176203s
+Merge sorted  100000  in  19.119832ms
+Success:
+Radix:  true
+QuickSort:  true
+Insertion:  true
+Merge:  true
+
+Radix sorted  1000000  in  47.965834ms
+Sort sorted  1000000  in  184.037864ms
+Quicksort sorted  1000000  in  93.071287ms
+Insertion sort skipped due to high set size
+Merge sorted  1000000  in  163.817966ms
+Success:
+Radix:  true
+QuickSort:  true
+Merge:  true
+
+Radix sorted  10000000  in  449.192062ms
+Sort sorted  10000000  in  2.132433473s
+Quicksort sorted  10000000  in  1.055007709s
+Insertion sort skipped due to high set size
+Merge sorted  10000000  in  1.644670057s
+Success:
+Radix:  true
+QuickSort:  true
+Merge:  true
+
+Radix sorted  100000000  in  4.575019916s
+Sort sorted  100000000  in  24.310221216s
+Quicksort sorted  100000000  in  11.906609603s
+Insertion sort skipped due to high set size
+Merge sorted  100000000  in  17.889905109s
+Success:
+Radix:  true
+QuickSort:  true
+Merge:  true
+
+Later tests with Radix sort
+---------------------------
 
 Radix sorted  10  in  13.319µs
 Sort sorted  10  in  2.353µs
@@ -62,8 +150,8 @@ Success:
 Radix:  true
 QuickSort:  true
 
-Earlier tests without Radix sort
---------------------------------
+First tests of Quicksort
+------------------------
 
 Sort sorted  10  in  1.232µs
 Quicksort sorted  10  in  885ns
