@@ -1,9 +1,13 @@
+**WARNING** There have been some breaking changes: All algorithms now operate on the fixed 64bit versions of the supported number types. (`[]int64` insted of `[]int`)
+
 Sort
 ====
 
-This package contains implementations of Radix Sort, Quicksort and Merge Sort in Golang.
+This package contains implementations of Radix Sort, Quicksort, Merge Sort and Insertion Sort in Golang.
 They are licensed under the Boost Software License 1.0.
-Benchmark results are included in benchmark.md.
+To run the benchmarks just download the package and run `go test -bench .`.
+Old benchmark results can be found in `benchmark.md` but might be inaccurate due to a sample size of 1.
+All sorting algorithms in this package might directly operate on the byte slice passed to them so please make a copy in case you still need the original order.
 
 Radix Sort
 ----------
@@ -27,7 +31,7 @@ It is 2-3 times faster than Golang's internal sort package for large sets of dat
 It uses only one copy of the set and is therefore preferred in constrained environments.
 
 ```go
-sort.QuickSort(set []int) []int
+sort.QuickSort(set []int64) []int64
 ```
 
 This implementation is based on the Hoare partition scheme and has been adapted from the pseudocode on Wikipedia [Quicksort](https://en.wikipedia.org/wiki/Quicksort#Hoare_partition_scheme)
@@ -39,8 +43,8 @@ Merge sort is an algorithm that sorts sets by dividing them and sorting them whi
 It is slower than Quicksort but can be especially useful when merging multiple sets of sorted data which may occur when distributing sorting across devices.
 
 ```go
-sort.MergeSort(set []int) []int
-sort.MergeSortedSets(set1 []int, set2 []int) []int
+sort.MergeSort(set []int64) []int64
+sort.MergeSortedSets(set1 []int64, set2 []int64) []int64
 ```
 
 Merge sort is a stable sorting algorithm that handles negative values and should therefore be preferred over Quicksort when you need to preserve the order of equal elements.
@@ -55,19 +59,10 @@ Insertion sort is a sorting algorithm that works by inserting individual items a
 It can be used to sort a set by starting with only one value in the sorted set but is much better suited for inserting a single new element into a sorted set.
 
 ```go
-sort.InsertionSort(set []int) []int
-sort.InsertSorted(sortedSet []int, insert int) []int
+sort.InsertionSort(set []int64) []int64
+sort.InsertSorted(sortedSet []int64, insert int64) []int64
 ```
 
-Due to inferior speed compared to all other algorithms in this package I would not recommend using Insertion sort for normal applications. If you don't know about a reason to use it you probably shouldn't.
+Due to inferior speed compared to all other algorithms in this package I would not recommend using Insertion sort for normal applications. If you don't know a clear advantage of using it in your application you probably shouldn't.
 
 Insert is intended to be used when adding one new element as may occur when adding a new item to a database.
-
-Example / Tests / Benchmark
----------------------------
-
-An example can be found in example. It is also used for testing as it compares the algorithms to the sort package in Golang. It may also be consided a benchmark as it records runtime for all algorithms including Golang's sort.
-
-To run the example just navigate to the example directory and run `go run example.go`
-
-There are no other tests implemented for this package and I don't plan to create any in the future. In case you would like to add tests feel free to submit a PR.
