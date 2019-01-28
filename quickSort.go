@@ -1,12 +1,12 @@
 package sort
 
 // QuickSort sorts the supplied integer array using quicksort
-func QuickSort(s []int) []int {
+func QuickSort(s []int64) []int64 {
 	quicksort(&s, 0, len(s)-1)
 	return s
 }
 
-func quicksort(s *[]int, lo, hi int) {
+func quicksort(s *[]int64, lo, hi int) {
 	if lo < hi {
 		p := partition(s, lo, hi)
 		quicksort(s, lo, p)
@@ -14,7 +14,7 @@ func quicksort(s *[]int, lo, hi int) {
 	}
 }
 
-func partition(s *[]int, lo, hi int) int {
+func partition(s *[]int64, lo, hi int) int {
 	pivot := (*s)[lo]
 	i := lo - 1
 	if i == -1 {
