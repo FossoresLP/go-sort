@@ -1,4 +1,4 @@
-**WARNING** There have been some breaking changes: All algorithms now operate on the fixed 64bit versions of the supported number types. (`[]int64` insted of `[]int`)
+**WARNING** There have been some breaking changes: All algorithms now operate on the fixed 64bit versions of the supported number types. (`[]int64` instead of `[]int`)
 
 Sort
 ====
