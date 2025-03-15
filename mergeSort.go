@@ -1,30 +1,31 @@
 package sort
 
-import "cmp"
+import (
+	"cmp"
+)
 
-// MergeSort is an implementation of the merge sort algorithm
-func MergeSort[T cmp.Ordered](set []T) []T {
-	if len(set) < 2 {
-		return set
+// MergeSort implements merge sort for all ordered primitive types.
+// It is a stable sorting algorithm, therefore maintaining the order of elements that have the same value.
+// The implementation does not operate in-place, temporarily allocating a copy of the data that needs to be sorted.
+// The worst-case performance is O(n log n) with a static space requirement of O(2n)
+func MergeSort[T cmp.Ordered](items []T) []T {
+	if len(items) < 2 {
+		return items
 	}
 
-	// Create only one temporary array
-	tmp := make([]T, len(set))
-
-	// Copy the original data to temp
-	copy(tmp, set)
+	// Create a copy of the data since merge sort cannot easily operate in-place
+	tmp := make([]T, len(items))
+	copy(tmp, items)
 
 	// Sort with alternating source and destination
-	mergeSort(tmp, set)
+	mergeSort(tmp, items)
 
-	return set
+	return items
 }
 
+// mergeSort in the recursive sorting part of merge sort and will call itself for each half of the supplied data and then mergeSortedSets to merge the results.
 func mergeSort[T cmp.Ordered](src, dst []T) {
-	// Base case: single element or empty slice
-	if len(src) == 1 {
-		// For a single element, copy it to destination if needed
-		dst[0] = src[0]
+	if len(src) < 2 {
 		return
 	}
 
@@ -32,7 +33,6 @@ func mergeSort[T cmp.Ordered](src, dst []T) {
 	mid := len(src) / 2
 
 	// Recursively sort the two halves with swapped src and dst
-	// This is the key trick: we alternate the roles of src and dst
 	mergeSort(dst[:mid], src[:mid])
 	mergeSort(dst[mid:], src[mid:])
 
@@ -40,32 +40,35 @@ func mergeSort[T cmp.Ordered](src, dst []T) {
 	mergeSortedSets(src[:mid], src[mid:], dst)
 }
 
-// MergeSortedSets is the merging part of the merge sort algorithm and may be used to combine two sorted sets.
-// You might find it useful when combining the results of a distributed sort.
+// MergeSortedSets merges two already sorted slices very efficiently.
+// It is used as part of merge sort but can also be useful when inserting multiple elements into a sorted slice (though the elements to insert first have to be sorted) or when combining the results of distributed sorting algoritms.
 func MergeSortedSets[T cmp.Ordered](a, b []T) []T {
-	l := len(a) + len(b)
-	buf := make([]T, l)
-	return mergeSortedSets(a, b, buf)
+	buf := make([]T, len(a)+len(b))
+	mergeSortedSets(a, b, buf)
+	return buf
 }
 
-func mergeSortedSets[T cmp.Ordered](a, b []T, buf []T) []T {
-	l := len(a) + len(b)
+// mergeSortedSets implements the actual sorting logic but requires a target buffer to be supplied, making it unsuitable as the public interface.
+// It is used by mergeSort and wrapped by MergeSortedSets for external use.
+func mergeSortedSets[T cmp.Ordered](a, b []T, buf []T) {
+	length := len(a) + len(b)
 	aPos := 0
 	bPos := 0
-	for j := 0; j < l; j++ {
-		if aPos == len(a) {
-			buf[j] = b[bPos]
-			bPos++
-		} else if bPos == len(b) {
-			buf[j] = a[aPos]
+	for i := range length {
+		if a[aPos] <= b[bPos] {
+			buf[i] = a[aPos]
 			aPos++
-		} else if a[aPos] <= b[bPos] {
-			buf[j] = a[aPos]
-			aPos++
+			if aPos == len(a) {
+				copy(buf[i+1:], b[bPos:])
+				return
+			}
 		} else {
-			buf[j] = b[bPos]
+			buf[i] = b[bPos]
 			bPos++
+			if bPos == len(b) {
+				copy(buf[i+1:], a[aPos:])
+				return
+			}
 		}
 	}
-	return buf
 }
