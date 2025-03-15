@@ -7,9 +7,14 @@ import (
 	"unsafe"
 )
 
-// RadixSort is radix sort for 64 bit unsigned integers
-// It operates byte-by-byte using 256 buckets
+// RadixSort implements radix sort using byte-by-byte sorting with 256 buckets for all integer types.
+// It creates an internal copy of the supplied data, leading to one large allocation.
+// The result is updated in-place and returned for convenience as well.
+// Other data types such as float64, float32 and string are handled via a fallback to slices.Sort.
+// Signed integers are handled by flipping the sign bit before and after sorting and treating them as unsigned integers.
+// The computational complexity is O(n) with a space requirement of O(2n).
 func RadixSort[T cmp.Ordered](items []T) []T {
+	// No need to sort slices with less than two items
 	if len(items) < 2 {
 		return items
 	}
@@ -79,18 +84,19 @@ func RadixSort[T cmp.Ordered](items []T) []T {
 	return items
 }
 
+// radixSortUint implements radix sort for all multi-byte unsigned integer types, adapting to their respective sizes
 func radixSortUint[T uint64 | uint32 | uint16 | uint | uintptr](items []T) []T {
-	l := len(items)
-	tmp := make([]T, l)
+	tmp := make([]T, len(items))
 	src := items
 	dst := tmp
 	var val T
 	bits := int(unsafe.Sizeof(val)) * 8
 
-	// Loop over the 8 bytes created for each unsigned integer
+	// Loop over the individual bytes of the unsigned integer type
 	for shift := 0; shift < bits; shift += 8 {
+		// Create buckets and count items
 		bucket := [256]int{}
-		for i := 0; i < l; i++ {
+		for i := range items {
 			bucket[int(src[i]>>shift&0xFF)]++
 		}
 
@@ -101,7 +107,7 @@ func radixSortUint[T uint64 | uint32 | uint16 | uint | uintptr](items []T) []T {
 		}
 
 		// Use the buckets indices when filling the sorted array
-		for i := l - 1; i >= 0; i-- {
+		for i := len(items) - 1; i >= 0; i-- {
 			v := &bucket[int(src[i]>>shift&0xFF)]
 			*v--
 			dst[*v] = src[i]
@@ -115,11 +121,11 @@ func radixSortUint[T uint64 | uint32 | uint16 | uint | uintptr](items []T) []T {
 }
 
 func countingSort(items []uint8) []uint8 {
-	l := len(items)
-	tmp := make([]uint8, l)
+	tmp := make([]uint8, len(items))
 
+	// Create buckets and count items
 	bucket := [256]int{}
-	for i := 0; i < l; i++ {
+	for i := range items {
 		bucket[int(items[i])]++
 	}
 
@@ -130,12 +136,13 @@ func countingSort(items []uint8) []uint8 {
 	}
 
 	// Use the buckets indices when filling the sorted array
-	for i := l - 1; i >= 0; i-- {
+	for i := len(items) - 1; i >= 0; i-- {
 		v := &bucket[int(items[i])]
 		*v--
 		tmp[*v] = items[i]
 	}
 
+	// Copy result back
 	copy(items, tmp)
 
 	return items
