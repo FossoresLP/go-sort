@@ -2,36 +2,68 @@ package sort
 
 // MergeSort is an implementation of the merge sort algorithm
 func MergeSort(set []int64) []int64 {
-	l := len(set)
-	if l < 2 {
+	if len(set) < 2 {
 		return set
 	}
 
-	pivot := l / 2
-	return MergeSortedSets(MergeSort(set[:pivot]), MergeSort(set[pivot:]))
+	// Create only one temporary array
+	tmp := make([]int64, len(set))
+
+	// Copy the original data to temp
+	copy(tmp, set)
+
+	// Sort with alternating source and destination
+	mergeSort(tmp, set)
+
+	return set
+}
+
+func mergeSort(src, dst []int64) {
+	// Base case: single element or empty slice
+	if len(src) == 1 {
+		// For a single element, copy it to destination if needed
+		dst[0] = src[0]
+		return
+	}
+
+	// Find the midpoint
+	mid := len(src) / 2
+
+	// Recursively sort the two halves with swapped src and dst
+	// This is the key trick: we alternate the roles of src and dst
+	mergeSort(dst[:mid], src[:mid])
+	mergeSort(dst[mid:], src[mid:])
+
+	// Merge the sorted halves from src into dst
+	mergeSortedSets(src[:mid], src[mid:], dst)
 }
 
 // MergeSortedSets is the merging part of the merge sort algorithm and may be used to combine two sorted sets.
 // You might find it useful when combining the results of a distributed sort.
 func MergeSortedSets(a, b []int64) []int64 {
 	l := len(a) + len(b)
-	group := make([]int64, l)
+	buf := make([]int64, l)
+	return mergeSortedSets(a, b, buf)
+}
+
+func mergeSortedSets(a, b []int64, buf []int64) []int64 {
+	l := len(a) + len(b)
 	aPos := 0
 	bPos := 0
 	for j := 0; j < l; j++ {
 		if aPos == len(a) {
-			group[j] = b[bPos]
+			buf[j] = b[bPos]
 			bPos++
 		} else if bPos == len(b) {
-			group[j] = a[aPos]
+			buf[j] = a[aPos]
 			aPos++
 		} else if a[aPos] <= b[bPos] {
-			group[j] = a[aPos]
+			buf[j] = a[aPos]
 			aPos++
 		} else {
-			group[j] = b[bPos]
+			buf[j] = b[bPos]
 			bPos++
 		}
 	}
-	return group
+	return buf
 }
