@@ -1,37 +1,48 @@
-**WARNING** There have been some breaking changes: All algorithms now operate on the fixed 64bit versions of the supported number types. (`[]int64` instead of `[]int`)
-
 Sort
 ====
 
-This package contains implementations of Radix Sort, Quicksort, Merge Sort and Insertion Sort in Golang.
-They are licensed under the Boost Software License 1.0.
-To run the benchmarks just download the package and run `go test -bench .`.
-Old benchmark results can be found in `benchmark.md` but might be inaccurate due to a sample size of 1.
-All sorting algorithms in this package might directly operate on the byte slice passed to them so please make a copy in case you still need the original order.
+This package contains implementations of Radix Sort, Quicksort, Merge Sort and Insertion Sort in Go.
+
+In addition, it provides the functions `InsertSorted` and `MergeSortedSets`.
+
+All implementations use generics and can operate on ordered primitive types as defined by `cmp.Ordered`.
+
+Sorting is performed in-place where possible and the input slice is always updated. As a convenience, it is returned as well.
+
+Benchmarks for all supported functions can be found in [benchmark.md](./benchmark.md).
 
 Radix Sort
 ----------
 
-Radix sort is an extremely fast algorithm implemented here specifically to sort unsigned integers.
-It is 2-3 times faster than Quicksort for large sets of data.
-Please make sure you have at least enough RAM available to fit your application and 4 times the size of the set.
+Radix Sort is a sorting algorithm that can operate in linear time O(n) for certain inputs.
+
+This implementation currently only supports integer types (signed and unsigned), falling back to `slices.Sort` automatically for all other types of data.
+
+Since Radix Sort is very difficult to implement efficiently in-place, this implementation creates a copy of the data.
+
+Sorting is performed using 256 buckets which means a single byte of the input items is processed at a time.
 
 ```go
-sort.RadixSort(set []uint64) []uint64
+sort.RadixSort[T cmp.Ordered](items []T) []T
 ```
 
-This version of Radix sort uses bytewise sorting with 256 buckets which increases memory usage due to the additional type conversions but improves performance.
 The implementation is based on the design by Austin G. Walters described in [Radix Sort in Go (Golang)](https://austingwalters.com/radix-sort-in-go/)
 
 Quicksort
 ---------
 
-Quicksort is a very versatile and fast sorting algorithm implemented here to sort integers.
-It is 2-3 times faster than Golang's internal sort package for large sets of data.
-It uses only one copy of the set and is therefore preferred in constrained environments.
+Quicksort is a very versatile and fast sorting algorithm.
+
+A more optimized version is part of the standard library as `slices.Sort` and should be used instead of this implementation.
+
+In-place sorting means that no additional memory is allocated.
+
+While the average complexity is O(n log n), Quicksort has a worst-case complexity of O(n²).
+
+The standard library implementation gets around this by falling back to Heap Sort in certain cases.
 
 ```go
-sort.QuickSort(set []int64) []int64
+sort.QuickSort[T cmp.Ordered](items []T) []T
 ```
 
 This implementation is based on the Hoare partition scheme and has been adapted from the pseudocode on Wikipedia [Quicksort](https://en.wikipedia.org/wiki/Quicksort#Hoare_partition_scheme)
@@ -39,30 +50,42 @@ This implementation is based on the Hoare partition scheme and has been adapted 
 Merge Sort
 ----------
 
-Merge sort is an algorithm that sorts sets by dividing them and sorting them while merging them together.
-It is slower than Quicksort but can be especially useful when merging multiple sets of sorted data which may occur when distributing sorting across devices.
+Merge Sort is a sorting algorithm that works by recursively merging sorted slices, starting from a size of 1.
+
+It is a stable sorting algorithm meaning items with the same value will retain their original order.
+
+The worst-case complexity is O(n log n), but it generally performs slightly worse than a well-optimized Quicksort.
+
+An in-place implementation is not possible, meaning a copy of the items is created in the process.
 
 ```go
-sort.MergeSort(set []int64) []int64
-sort.MergeSortedSets(set1 []int64, set2 []int64) []int64
+sort.MergeSort[T cmp.Ordered](items []T) []T
 ```
 
-Merge sort is a stable sorting algorithm that handles negative values and should therefore be preferred over Quicksort when you need to preserve the order of equal elements.
-Due to keeping up to 2 copies of the full set in memory, it is not recommended to use Merge sort in constrained environments.
+A part of merge sort, the function `MergeSortedSets` is exposed as well.
 
-Merge sorted sets is intended to be used to merge two sorted sets together. It is used by Merge sort internally but can also be used to merge the results of multi-threaded or distributed sorting algorithms.
+It efficiently combines two already sorted sets.
+
+This can be useful for combining the results of distributed (or multithreaded) sorting algorithms as well as inserting multiple elements (which can quickly be sorted e.g. using insertion sort) into a large, already sorted slice.
+
+```go
+sort.MergeSortedSets[T cmp.Ordered](a []T, b []T) []T
+```
 
 Insertion Sort
 --------------
 
-Insertion sort is a sorting algorithm that works by inserting individual items at the right position, keeping the existing set sorted.
-It can be used to sort a set by starting with only one value in the sorted set but is much better suited for inserting a single new element into a sorted set.
+Insertion Sort is a very simply but inefficient sorting algorithm that works by starting with a single value and then adding one item after the other at the right position to keep the result sorted.
+
+It operates in-place and can be very efficient for small sets since it does not depend on recursion, but with a complexity of O(n²), it does not scale well.
 
 ```go
-sort.InsertionSort(set []int64) []int64
-sort.InsertSorted(sortedSet []int64, insert int64) []int64
+sort.InsertionSort[T cmp.Ordered](items []T) []T
+
 ```
 
-Due to inferior speed compared to all other algorithms in this package I would not recommend using Insertion sort for normal applications. If you don't know a clear advantage of using it in your application you probably shouldn't.
+The insertion process of Insertion Sort can be used individually to efficiently insert a single element into an already sorted slice.
 
-Insert is intended to be used when adding one new element as may occur when adding a new item to a database.
+```go
+sort.InsertSorted[T cmp.Ordered](sorted []T, insert T) []T
+```
