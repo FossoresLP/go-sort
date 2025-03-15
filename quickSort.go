@@ -1,12 +1,14 @@
 package sort
 
+import "cmp"
+
 // QuickSort sorts the supplied integer array using quicksort
-func QuickSort(s []int64) []int64 {
+func QuickSort[T cmp.Ordered](s []T) []T {
 	quicksort(&s, 0, len(s)-1)
 	return s
 }
 
-func quicksort(s *[]int64, lo, hi int) {
+func quicksort[T cmp.Ordered](s *[]T, lo, hi int) {
 	if lo < hi {
 		p := partition(s, lo, hi)
 		quicksort(s, lo, p)
@@ -14,7 +16,7 @@ func quicksort(s *[]int64, lo, hi int) {
 	}
 }
 
-func partition(s *[]int64, lo, hi int) int {
+func partition[T cmp.Ordered](s *[]T, lo, hi int) int {
 	pivot := (*s)[lo]
 	i := lo - 1
 	if i == -1 {

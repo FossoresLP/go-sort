@@ -1,91 +1,50 @@
 package sort
 
 import (
+	"cmp"
 	"fmt"
+	"math"
 	"math/rand"
+	"slices"
 	"testing"
 )
 
-func BenchmarkInsertionSort(b *testing.B) {
-	for i := 100; ; i *= 10 {
-		maxn := 0
-		b.Run(fmt.Sprintf("InsertionSort %d", i), func(b *testing.B) {
-			for j := 0; j < b.N; j++ {
-				b.StopTimer()
-				values := make([]int64, i)
-				for k := 0; k < i; k++ {
-					values[k] = int64(rand.Uint64())
-				}
-				b.StartTimer()
-				InsertionSort(values)
-			}
-			maxn = b.N
-		})
-		if maxn == 1 {
-			break
-		}
-	}
+func slicesSort[T cmp.Ordered](items []T) []T {
+	slices.Sort(items)
+	return items
 }
 
-func BenchmarkMergeSort(b *testing.B) {
-	for i := 100; ; i *= 10 {
-		maxn := 0
-		b.Run(fmt.Sprintf("MergeSort %d", i), func(b *testing.B) {
-			for j := 0; j < b.N; j++ {
-				b.StopTimer()
-				values := make([]int64, i)
-				for k := 0; k < i; k++ {
-					values[k] = int64(rand.Uint64())
-				}
-				b.StartTimer()
-				MergeSort(values)
-			}
-			maxn = b.N
-		})
-		if maxn == 1 {
-			break
-		}
+func BenchmarkSort(b *testing.B) {
+	tests := []struct {
+		Name string
+		Func func([]uint64) []uint64
+	}{
+		{"InsertionSort", InsertionSort[uint64]},
+		{"MergeSort", MergeSort[uint64]},
+		{"QuickSort", QuickSort[uint64]},
+		{"RadixSort", RadixSort[uint64]},
+		{"slices.Sort", slicesSort[uint64]},
 	}
-}
-
-func BenchmarkQuickSort(b *testing.B) {
-	for i := 100; ; i *= 10 {
-		maxn := 0
-		b.Run(fmt.Sprintf("QuickSort %d", i), func(b *testing.B) {
-			for j := 0; j < b.N; j++ {
-				b.StopTimer()
-				values := make([]int64, i)
-				for k := 0; k < i; k++ {
-					values[k] = int64(rand.Uint64())
+	for _, tt := range tests {
+		b.Run(tt.Name, func(b *testing.B) {
+			runs := math.MaxInt
+			for i := 100; i <= 1000000000; i *= 10 {
+				b.Run(fmt.Sprintf("items=%d", i), func(b *testing.B) {
+					values := make([]uint64, i)
+					data := make([]uint64, i)
+					for k := range len(values) {
+						values[k] = rand.Uint64()
+					}
+					for b.Loop() {
+						copy(data, values)
+						tt.Func(data)
+					}
+					runs = b.N
+				})
+				if runs == 1 {
+					break
 				}
-				b.StartTimer()
-				QuickSort(values)
 			}
-			maxn = b.N
 		})
-		if maxn == 1 {
-			break
-		}
-	}
-}
-
-func BenchmarkRadixSort(b *testing.B) {
-	for i := 100; ; i *= 10 {
-		maxn := 0
-		b.Run(fmt.Sprintf("RadixSort %d", i), func(b *testing.B) {
-			for j := 0; j < b.N; j++ {
-				b.StopTimer()
-				values := make([]uint64, i)
-				for k := 0; k < i; k++ {
-					values[k] = rand.Uint64()
-				}
-				b.StartTimer()
-				RadixSort(values)
-			}
-			maxn = b.N
-		})
-		if maxn == 1 {
-			break
-		}
 	}
 }

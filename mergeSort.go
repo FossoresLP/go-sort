@@ -1,13 +1,15 @@
 package sort
 
+import "cmp"
+
 // MergeSort is an implementation of the merge sort algorithm
-func MergeSort(set []int64) []int64 {
+func MergeSort[T cmp.Ordered](set []T) []T {
 	if len(set) < 2 {
 		return set
 	}
 
 	// Create only one temporary array
-	tmp := make([]int64, len(set))
+	tmp := make([]T, len(set))
 
 	// Copy the original data to temp
 	copy(tmp, set)
@@ -18,7 +20,7 @@ func MergeSort(set []int64) []int64 {
 	return set
 }
 
-func mergeSort(src, dst []int64) {
+func mergeSort[T cmp.Ordered](src, dst []T) {
 	// Base case: single element or empty slice
 	if len(src) == 1 {
 		// For a single element, copy it to destination if needed
@@ -40,13 +42,13 @@ func mergeSort(src, dst []int64) {
 
 // MergeSortedSets is the merging part of the merge sort algorithm and may be used to combine two sorted sets.
 // You might find it useful when combining the results of a distributed sort.
-func MergeSortedSets(a, b []int64) []int64 {
+func MergeSortedSets[T cmp.Ordered](a, b []T) []T {
 	l := len(a) + len(b)
-	buf := make([]int64, l)
+	buf := make([]T, l)
 	return mergeSortedSets(a, b, buf)
 }
 
-func mergeSortedSets(a, b []int64, buf []int64) []int64 {
+func mergeSortedSets[T cmp.Ordered](a, b []T, buf []T) []T {
 	l := len(a) + len(b)
 	aPos := 0
 	bPos := 0
