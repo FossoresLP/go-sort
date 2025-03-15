@@ -1,181 +1,190 @@
-Benchmark results
-=================
+# Benchmark results
 
-This file contains the output of example/example.go run on an i7 3770k with 16GB of RAM.
+This file contains benchmark results of sorting arrays of randomly distributed `uint64`s from two different systems, analyzed with `benchstat` based on 8 runs for each benchmark.
 
-Current results
----------------
+As a comparison point, `slices.Sort` is included as well, showing how well its implementation of QuickSort is optimized.
 
-Radix sorted  10  in  10.167µs
-Sort sorted  10  in  2.22µs
-Quicksort sorted  10  in  1.624µs
-Insertion sorted  10  in  476ns
-Merge sorted  10  in  890ns
-Success:
-Radix:  true
-QuickSort:  true
-Insertion:  true
-Merge:  true
+At the bottom, a comparison between v0 and v1 shows how certain optimizations helped improve performance.
 
-Radix sorted  100  in  6.517µs
-Sort sorted  100  in  15.09µs
-Quicksort sorted  100  in  10.403µs
-Insertion sorted  100  in  11.817µs
-Merge sorted  100  in  22.652µs
-Success:
-Radix:  true
-QuickSort:  true
-Insertion:  true
-Merge:  true
+The raw benchmark results are included as `benchmark_amd.txt` and `benchmark_intel.txt` for reference.
 
-Radix sorted  1000  in  64.092µs
-Sort sorted  1000  in  178.735µs
-Quicksort sorted  1000  in  105.591µs
-Insertion sorted  1000  in  582.955µs
-Merge sorted  1000  in  187.103µs
-Success:
-Radix:  true
-QuickSort:  true
-Insertion:  true
-Merge:  true
+## AMD Ryzen 5 3600 6-Core Processor / 64 GB DDR4 / Linux 6.13.4
 
-Radix sorted  10000  in  583.762µs
-Sort sorted  10000  in  2.327078ms
-Quicksort sorted  10000  in  1.243841ms
-Insertion sorted  10000  in  34.99612ms
-Merge sorted  10000  in  1.210353ms
-Success:
-Radix:  true
-QuickSort:  true
-Insertion:  true
-Merge:  true
+| Number of Items | InsertionSort   | MergeSort                           | QuickSort                           | RadixSort                           | slices.Sort                        |
+| --------------- | --------------- | ----------------------------------- | ----------------------------------- | ----------------------------------- | ---------------------------------- |
+|                 | sec/op          | sec/op     vs base                  | sec/op     vs base                  | sec/op     vs base                  | sec/op     vs base                 |
+| 100             | 3844.5n ± 15%   | 1720.5n ± 1%  -55.25% (p=0.000 n=8) | 2028.0n ± 2%  -47.25% (p=0.000 n=8) | 5362.5n ± 2%  +39.48% (p=0.000 n=8) | 869.6n ± 7%  -77.38% (p=0.000 n=8) |
+| 1000            | 434.21µ ±  2%   | 38.56µ ± 1%  -91.12% (p=0.000 n=8)  | 54.14µ ± 4%  -87.53% (p=0.000 n=8)  | 15.70µ ± 5%  -96.38% (p=0.000 n=8)  | 15.23µ ± 4%  -96.49% (p=0.000 n=8) |
+| 10000           | 41849.7µ ±  1%  | 617.2µ ± 0%  -98.53% (p=0.000 n=8)  | 775.0µ ± 4%  -98.15% (p=0.000 n=8)  | 182.9µ ± 1%  -99.56% (p=0.000 n=8)  | 486.4µ ± 2%  -98.84% (p=0.000 n=8) |
+| 100000          | 4203.746m ±  0% | 7.595m ± 0%  -99.82% (p=0.000 n=8)  | 9.338m ± 2%  -99.78% (p=0.000 n=8)  | 1.870m ± 5%  -99.96% (p=0.000 n=8)  | 6.074m ± 1%  -99.86% (p=0.000 n=8) |
+| 1000000         |                 | 89.98m ± 2%                         | 111.36m ± 2%                        | 20.12m ± 0%                         | 72.46m ± 1%                        |
+| 10000000        |                 | 1029.6m ± 1%                        | 1256.1m ± 1%                        | 235.1m ± 0%                         | 837.0m ± 1%                        |
+| 100000000       |                 |                                     |                                     | 2.353 ± 0%                          | 9.472 ± 1%                         |
+| geomean         | 4.140m          | 1.751m       -96.79%                | 2.193m       -95.94%                | 2.280m       -98.23%                | 4.185m       -98.09%               |
 
-Radix sorted  100000  in  3.553859ms
-Sort sorted  100000  in  18.349581ms
-Quicksort sorted  100000  in  7.81994ms
-Insertion sorted  100000  in  3.234176203s
-Merge sorted  100000  in  19.119832ms
-Success:
-Radix:  true
-QuickSort:  true
-Insertion:  true
-Merge:  true
+| Number of Items | InsertionSort | MergeSort                     | QuickSort                          | RadixSort                     | slices.Sort                        |
+| --------------- | ------------- | ----------------------------- | ---------------------------------- | ----------------------------- | ---------------------------------- |
+|                 | B/op          | B/op      vs base             | B/op      vs base                  | B/op      vs base             | B/op      vs base                  |
+| 100             | 0.0 ± 0%      | 896.0 ± 0%  ? (p=0.000 n=8)   | 0.0 ± 0%       ~ (p=1.000 n=8)     | 896.0 ± 0%  ? (p=0.000 n=8)   | 0.0 ± 0%       ~ (p=1.000 n=8)     |
+| 1000            | 0.000Ki ± 0%  | 8.000Ki ± 0%  ? (p=0.000 n=8) | 0.000Ki ± 0%       ~ (p=1.000 n=8) | 8.000Ki ± 0%  ? (p=0.000 n=8) | 0.000Ki ± 0%       ~ (p=1.000 n=8) |
+| 10000           | 0.00Ki ± 0%   | 80.00Ki ± 0%  ? (p=0.000 n=8) | 0.00Ki ± 0%       ~ (p=1.000 n=8)  | 80.00Ki ± 0%  ? (p=0.000 n=8) | 0.00Ki ± 0%       ~ (p=1.000 n=8)  |
+| 100000          | 0.0Ki ± 0%    | 784.0Ki ± 0%  ? (p=0.000 n=8) | 0.0Ki ± 0%       ~ (p=1.000 n=8)   | 784.0Ki ± 0%  ? (p=0.000 n=8) | 0.0Ki ± 0%       ~ (p=1.000 n=8)   |
+| 1000000         |               | 7.633Mi ± 0%                  | 0.000Mi ± 0%                       | 7.633Mi ± 0%                  | 0.000Mi ± 0%                       |
+| 10000000        |               | 76.30Mi ± 0%                  | 0.00Mi ± 0%                        | 76.30Mi ± 0%                  | 0.00Mi ± 0%                        |
+| 100000000       |               |                               |                                    | 762.9Mi ± 0%                  | 0.0Mi ± 0%                         |
 
-Radix sorted  1000000  in  47.965834ms
-Sort sorted  1000000  in  184.037864ms
-Quicksort sorted  1000000  in  93.071287ms
-Insertion sort skipped due to high set size
-Merge sorted  1000000  in  163.817966ms
-Success:
-Radix:  true
-QuickSort:  true
-Merge:  true
+| Number of Items | InsertionSort | MergeSort                   | QuickSort                        | RadixSort                   | slices.Sort                      |
+| --------------- | ------------- | --------------------------- | -------------------------------- | --------------------------- | -------------------------------- |
+|                 | allocs/op     | allocs/op   vs base         | allocs/op   vs base              | allocs/op   vs base         | allocs/op   vs base              |
+| 100             | 0.000 ± 0%    | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) |
+| 1000            | 0.000 ± 0%    | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) |
+| 10000           | 0.000 ± 0%    | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) |
+| 100000          | 0.000 ± 0%    | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) |
+| 1000000         |               | 1.000 ± 0%                  | 0.000 ± 0%                       | 1.000 ± 0%                  | 0.000 ± 0%                       |
+| 10000000        |               | 1.000 ± 0%                  | 0.000 ± 0%                       | 1.000 ± 0%                  | 0.000 ± 0%                       |
+| 100000000       |               |                             |                                  | 1.000 ± 0%                  | 0.000 ± 0%                       |
 
-Radix sorted  10000000  in  449.192062ms
-Sort sorted  10000000  in  2.132433473s
-Quicksort sorted  10000000  in  1.055007709s
-Insertion sort skipped due to high set size
-Merge sorted  10000000  in  1.644670057s
-Success:
-Radix:  true
-QuickSort:  true
-Merge:  true
+## Intel(R) Core(TM) i7-8705G CPU @ 3.10GHz / 32 GB DDR4 / Linux 6.13.5
 
-Radix sorted  100000000  in  4.575019916s
-Sort sorted  100000000  in  24.310221216s
-Quicksort sorted  100000000  in  11.906609603s
-Insertion sort skipped due to high set size
-Merge sorted  100000000  in  17.889905109s
-Success:
-Radix:  true
-QuickSort:  true
-Merge:  true
+| Number of Items | InsertionSort  | MergeSort                           | QuickSort                           | RadixSort                           | slices.Sort                        |
+| --------------- | -------------- | ----------------------------------- | ----------------------------------- | ----------------------------------- | ---------------------------------- |
+|                 | sec/op         | sec/op     vs base                  | sec/op     vs base                  | sec/op     vs base                  | sec/op     vs base                 |
+| 100             | 3092.5n ± 7%   | 1936.0n ± 5%  -37.40% (p=0.000 n=8) | 1867.0n ± 3%  -39.63% (p=0.000 n=8) | 5009.0n ± 1%  +61.97% (p=0.000 n=8) | 886.1n ± 6%  -71.35% (p=0.000 n=8) |
+| 1000            | 311.57µ ± 3%   | 51.28µ ± 3%  -83.54% (p=0.000 n=8)  | 51.55µ ± 4%  -83.45% (p=0.000 n=8)  | 20.81µ ± 2%  -93.32% (p=0.000 n=8)  | 30.32µ ± 2%  -90.27% (p=0.000 n=8) |
+| 10000           | 30532.3µ ± 2%  | 705.3µ ± 2%  -97.69% (p=0.000 n=8)  | 732.1µ ± 4%  -97.60% (p=0.000 n=8)  | 200.9µ ± 5%  -99.34% (p=0.000 n=8)  | 562.0µ ± 2%  -98.16% (p=0.000 n=8) |
+| 100000          | 3098.013m ± 3% | 8.377m ± 3%  -99.73% (p=0.000 n=8)  | 8.861m ± 2%  -99.71% (p=0.000 n=8)  | 2.138m ± 4%  -99.93% (p=0.000 n=8)  | 6.862m ± 0%  -99.78% (p=0.000 n=8) |
+| 1000000         |                | 97.68m ± 5%                         | 102.91m ± 4%                        | 23.61m ± 4%                         | 82.27m ± 2%                        |
+| 10000000        |                | 1079.9m ± 4%                        | 1188.2m ± 3%                        | 242.4m ± 3%                         | 945.8m ± 1%                        |
+| 100000000       |                |                                     |                                     | 2.501 ± 2%                          | 10.772 ± 2%                        |
+| geomean         | 3.090m         | 1.989m       -94.96%                | 2.060m       -94.88%                | 2.518m       -97.35%                | 5.076m       -96.73%               |
 
-Later tests with Radix sort
----------------------------
+| Number of Items | InsertionSort | MergeSort                     | QuickSort                          | RadixSort                     | slices.Sort                        |
+| --------------- | ------------- | ----------------------------- | ---------------------------------- | ----------------------------- | ---------------------------------- |
+|                 | B/op          | B/op      vs base             | B/op      vs base                  | B/op      vs base             | B/op      vs base                  |
+| 100             | 0.0 ± 0%      | 896.0 ± 0%  ? (p=0.000 n=8)   | 0.0 ± 0%       ~ (p=1.000 n=8)     | 896.0 ± 0%  ? (p=0.000 n=8)   | 0.0 ± 0%       ~ (p=1.000 n=8)     |
+| 1000            | 0.000Ki ± 0%  | 8.000Ki ± 0%  ? (p=0.000 n=8) | 0.000Ki ± 0%       ~ (p=1.000 n=8) | 8.000Ki ± 0%  ? (p=0.000 n=8) | 0.000Ki ± 0%       ~ (p=1.000 n=8) |
+| 10000           | 0.00Ki ± 0%   | 80.00Ki ± 0%  ? (p=0.000 n=8) | 0.00Ki ± 0%       ~ (p=1.000 n=8)  | 80.00Ki ± 0%  ? (p=0.000 n=8) | 0.00Ki ± 0%       ~ (p=1.000 n=8)  |
+| 100000          | 0.0Ki ± 0%    | 784.0Ki ± 0%  ? (p=0.000 n=8) | 0.0Ki ± 0%       ~ (p=1.000 n=8)   | 784.0Ki ± 0%  ? (p=0.000 n=8) | 0.0Ki ± 0%       ~ (p=1.000 n=8)   |
+| 1000000         |               | 7.633Mi ± 0%                  | 0.000Mi ± 0%                       | 7.633Mi ± 0%                  | 0.000Mi ± 0%                       |
+| 10000000        |               | 76.30Mi ± 0%                  | 0.00Mi ± 0%                        | 76.30Mi ± 0%                  | 0.00Mi ± 0%                        |
+| 100000000       |               |                               |                                    | 762.9Mi ± 0%                  | 0.0Mi ± 0%                         |
 
-Radix sorted  10  in  13.319µs
-Sort sorted  10  in  2.353µs
-Quicksort sorted  10  in  19.316µs
-Success:
-Radix:  true
-QuickSort:  true
+| Number of Items | InsertionSort | MergeSort                   | QuickSort                        | RadixSort                   | slices.Sort                      |
+| --------------- | ------------- | --------------------------- | -------------------------------- | --------------------------- | -------------------------------- |
+|                 | allocs/op     | allocs/op   vs base         | allocs/op   vs base              | allocs/op   vs base         | allocs/op   vs base              |
+| 100             | 0.000 ± 0%    | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) |
+| 1000            | 0.000 ± 0%    | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) |
+| 10000           | 0.000 ± 0%    | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) |
+| 100000          | 0.000 ± 0%    | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) | 1.000 ± 0%  ? (p=0.000 n=8) | 0.000 ± 0%       ~ (p=1.000 n=8) |
+| 1000000         |               | 1.000 ± 0%                  | 0.000 ± 0%                       | 1.000 ± 0%                  | 0.000 ± 0%                       |
+| 10000000        |               | 1.000 ± 0%                  | 0.000 ± 0%                       | 1.000 ± 0%                  | 0.000 ± 0%                       |
+| 100000000       |               |                             |                                  | 1.000 ± 0%                  | 0.000 ± 0%                       |
 
-Radix sorted  100  in  18.454µs
-Sort sorted  100  in  18.288µs
-Quicksort sorted  100  in  12.535µs
-Success:
-Radix:  true
-QuickSort:  true
+## v0 vs v1 Comparison
 
-Radix sorted  1000  in  85.955µs
-Sort sorted  1000  in  232.067µs
-Quicksort sorted  1000  in  140.521µs
-Success:
-Radix:  true
-QuickSort:  true
+Intel(R) Core(TM) i7-8705G CPU @ 3.10GHz / 32 GB DDR4 / Linux 6.13.5
 
-Radix sorted  10000  in  772.48µs
-Sort sorted  10000  in  2.473692ms
-Quicksort sorted  10000  in  1.212938ms
-Success:
-Radix:  true
-QuickSort:  true
+|                               | v0           | v1                                 |
+| ----------------------------- | ------------ | ---------------------------------- |
+|                               | sec/op       | sec/op     vs base                 |
+| InsertionSort/items=100-8     | 4.065µ ± 0%  | 3.093µ ± 7%  -23.92% (p=0.000 n=8) |
+| InsertionSort/items=1000-8    | 323.8µ ± 3%  | 311.6µ ± 3%   -3.78% (p=0.000 n=8) |
+| InsertionSort/items=10000-8   | 30.47m ± 3%  | 30.53m ± 2%        ~ (p=0.798 n=8) |
+| InsertionSort/items=100000-8  | 3.040 ± 1%   | 3.098 ± 3%   +1.92% (p=0.007 n=8)  |
+| MergeSort/items=100-8         | 8.972µ ± 4%  | 1.936µ ± 5%  -78.42% (p=0.000 n=8) |
+| MergeSort/items=1000-8        | 91.99µ ± 2%  | 51.28µ ± 3%  -44.25% (p=0.000 n=8) |
+| MergeSort/items=10000-8       | 1064.0µ ± 2% | 705.3µ ± 2%  -33.71% (p=0.000 n=8) |
+| MergeSort/items=100000-8      | 14.304m ± 1% | 8.377m ± 3%  -41.44% (p=0.000 n=8) |
+| MergeSort/items=1000000-8     | 148.53m ± 3% | 97.68m ± 5%  -34.23% (p=0.000 n=8) |
+| MergeSort/items=10000000-8    | 1.497 ± 2%   | 1.080 ± 4%  -27.86% (p=0.000 n=8)  |
+| QuickSort/items=100-8         | 5.106µ ± 2%  | 1.867µ ± 3%  -63.43% (p=0.000 n=8) |
+| QuickSort/items=1000-8        | 64.10µ ± 2%  | 51.55µ ± 4%  -19.58% (p=0.000 n=8) |
+| QuickSort/items=10000-8       | 763.9µ ± 1%  | 732.1µ ± 4%   -4.16% (p=0.007 n=8) |
+| QuickSort/items=100000-8      | 9.014m ± 2%  | 8.861m ± 2%        ~ (p=0.065 n=8) |
+| QuickSort/items=1000000-8     | 103.6m ± 2%  | 102.9m ± 4%        ~ (p=0.721 n=8) |
+| QuickSort/items=10000000-8    | 1.181 ± 2%   | 1.188 ± 3%        ~ (p=0.234 n=8)  |
+| RadixSort/items=100-8         | 6.247µ ± 2%  | 5.009µ ± 1%  -19.81% (p=0.000 n=8) |
+| RadixSort/items=1000-8        | 25.83µ ± 1%  | 20.81µ ± 2%  -19.40% (p=0.000 n=8) |
+| RadixSort/items=10000-8       | 256.8µ ± 3%  | 200.9µ ± 5%  -21.78% (p=0.000 n=8) |
+| RadixSort/items=100000-8      | 2.970m ± 3%  | 2.138m ± 4%  -28.01% (p=0.000 n=8) |
+| RadixSort/items=1000000-8     | 31.01m ± 3%  | 23.61m ± 4%  -23.85% (p=0.000 n=8) |
+| RadixSort/items=10000000-8    | 299.4m ± 2%  | 242.4m ± 3%  -19.04% (p=0.000 n=8) |
+| RadixSort/items=100000000-8   | 3.617 ± 3%   | 2.501 ± 2%  -30.85% (p=0.000 n=8)  |
+| slices.Sort/items=100-8       |              | 886.1n ± 6%                        |
+| slices.Sort/items=1000-8      |              | 30.32µ ± 2%                        |
+| slices.Sort/items=10000-8     |              | 562.0µ ± 2%                        |
+| slices.Sort/items=100000-8    |              | 6.862m ± 0%                        |
+| slices.Sort/items=1000000-8   |              | 82.27m ± 2%                        |
+| slices.Sort/items=10000000-8  |              | 945.8m ± 1%                        |
+| slices.Sort/items=100000000-8 |              | 10.77 ± 2%                         |
+| geomean                       | 3.190m       | 2.792m       -27.03%               |
 
-Radix sorted  100000  in  5.012217ms
-Sort sorted  100000  in  21.121836ms
-Quicksort sorted  100000  in  8.046821ms
-Success:
-Radix:  true
-QuickSort:  true
+|                               | v0             | v1                                  |
+| ----------------------------- | -------------- | ----------------------------------- |
+|                               | B/op           | B/op      vs base                   |
+| InsertionSort/items=100-8     | 0.000 ± 0%     | 0.000 ± 0%        ~ (p=1.000 n=8)   |
+| InsertionSort/items=1000-8    | 0.000 ± 0%     | 0.000 ± 0%        ~ (p=1.000 n=8)   |
+| InsertionSort/items=10000-8   | 0.000 ± 0%     | 0.000 ± 0%        ~ (p=1.000 n=8)   |
+| InsertionSort/items=100000-8  | 0.000 ± 0%     | 0.000 ± 0%        ~ (p=1.000 n=8)   |
+| MergeSort/items=100-8         | 5600.0 ± 0%    | 896.0 ± 0%  -84.00% (p=0.000 n=8)   |
+| MergeSort/items=1000-8        | 79.438Ki ± 0%  | 8.000Ki ± 0%  -89.93% (p=0.000 n=8) |
+| MergeSort/items=10000-8       | 1086.63Ki ± 0% | 80.00Ki ± 0%  -92.64% (p=0.000 n=8) |
+| MergeSort/items=100000-8      | 13728.3Ki ± 0% | 784.0Ki ± 0%  -94.29% (p=0.000 n=8) |
+| MergeSort/items=1000000-8     | 156.764Mi ± 0% | 7.633Mi ± 0%  -95.13% (p=0.000 n=8) |
+| MergeSort/items=10000000-8    | 1847.06Mi ± 0% | 76.30Mi ± 0%  -95.87% (p=0.000 n=8) |
+| QuickSort/items=100-8         | 0.000 ± 0%     | 0.000 ± 0%        ~ (p=1.000 n=8)   |
+| QuickSort/items=1000-8        | 0.000 ± 0%     | 0.000 ± 0%        ~ (p=1.000 n=8)   |
+| QuickSort/items=10000-8       | 0.000 ± 0%     | 0.000 ± 0%        ~ (p=1.000 n=8)   |
+| QuickSort/items=100000-8      | 0.000 ± 0%     | 0.000 ± 0%        ~ (p=1.000 n=8)   |
+| QuickSort/items=1000000-8     | 0.000 ± 0%     | 0.000 ± 0%        ~ (p=1.000 n=8)   |
+| QuickSort/items=10000000-8    | 0.000 ± 0%     | 0.000 ± 0%        ~ (p=1.000 n=8)   |
+| RadixSort/items=100-8         | 2688.0 ± 0%    | 896.0 ± 0%  -66.67% (p=0.000 n=8)   |
+| RadixSort/items=1000-8        | 24.000Ki ± 0%  | 8.000Ki ± 0%  -66.67% (p=0.000 n=8) |
+| RadixSort/items=10000-8       | 240.00Ki ± 0%  | 80.00Ki ± 0%  -66.67% (p=0.000 n=8) |
+| RadixSort/items=100000-8      | 2352.0Ki ± 0%  | 784.0Ki ± 0%  -66.67% (p=0.000 n=8) |
+| RadixSort/items=1000000-8     | 22.898Mi ± 0%  | 7.633Mi ± 0%  -66.67% (p=0.000 n=8) |
+| RadixSort/items=10000000-8    | 228.89Mi ± 0%  | 76.30Mi ± 0%  -66.67% (p=0.000 n=8) |
+| RadixSort/items=100000000-8   | 2288.8Mi ± 0%  | 762.9Mi ± 0%  -66.67% (p=0.000 n=8) |
+| slices.Sort/items=100-8       |                | 0.000 ± 0%                          |
+| slices.Sort/items=1000-8      |                | 0.000 ± 0%                          |
+| slices.Sort/items=10000-8     |                | 0.000 ± 0%                          |
+| slices.Sort/items=100000-8    |                | 0.000 ± 0%                          |
+| slices.Sort/items=1000000-8   |                | 0.000 ± 0%                          |
+| slices.Sort/items=10000000-8  |                | 0.000 ± 0%                          |
+| slices.Sort/items=100000000-8 |                | 0.000 ± 0%                          |
+| geomean                       |                | -64.00%                             |
 
-Radix sorted  1000000  in  46.740532ms
-Sort sorted  1000000  in  187.233799ms
-Quicksort sorted  1000000  in  95.314782ms
-Success:
-Radix:  true
-QuickSort:  true
-
-Radix sorted  10000000  in  462.379556ms
-Sort sorted  10000000  in  2.147001491s
-Quicksort sorted  10000000  in  1.079043131s
-Success:
-Radix:  true
-QuickSort:  true
-
-Radix sorted  100000000  in  4.606175081s
-Sort sorted  100000000  in  24.272163308s
-Quicksort sorted  100000000  in  12.093175678s
-Success:
-Radix:  true
-QuickSort:  true
-
-First tests of Quicksort
-------------------------
-
-Sort sorted  10  in  1.232µs
-Quicksort sorted  10  in  885ns
-
-Sort sorted  100  in  7.723µs
-Quicksort sorted  100  in  5.462µs
-
-Sort sorted  1000  in  96.258µs
-Quicksort sorted  1000  in  61.588µs
-
-Sort sorted  10000  in  1.256535ms
-Quicksort sorted  10000  in  739.672µs
-
-Sort sorted  100000  in  15.43422ms
-Quicksort sorted  100000  in  8.831228ms
-
-Sort sorted  1000000  in  190.096395ms
-Quicksort sorted  1000000  in  104.110686ms
-
-Sort sorted  10000000  in  2.139816277s
-Quicksort sorted  10000000  in  1.181530688s
-
-Sort sorted  100000000  in  24.435276898s
-Quicksort sorted  100000000  in  13.315615248s
-
-Sort sorted  1000000000  in  11m32.177990751s
-Quicksort sorted  1000000000  in  6m18.776106009s
+|                               | v0                | v1                                 |
+| ----------------------------- | ----------------- | ---------------------------------- |
+|                               | allocs/op         | allocs/op   vs base                |
+| InsertionSort/items=100-8     | 0.000 ± 0%        | 0.000 ± 0%         ~ (p=1.000 n=8) |
+| InsertionSort/items=1000-8    | 0.000 ± 0%        | 0.000 ± 0%         ~ (p=1.000 n=8) |
+| InsertionSort/items=10000-8   | 0.000 ± 0%        | 0.000 ± 0%         ~ (p=1.000 n=8) |
+| InsertionSort/items=100000-8  | 0.000 ± 0%        | 0.000 ± 0%         ~ (p=1.000 n=8) |
+| MergeSort/items=100-8         | 99.000 ± 0%       | 1.000 ± 0%   -98.99% (p=0.000 n=8) |
+| MergeSort/items=1000-8        | 999.000 ± 0%      | 1.000 ± 0%   -99.90% (p=0.000 n=8) |
+| MergeSort/items=10000-8       | 9999.000 ± 0%     | 1.000 ± 0%   -99.99% (p=0.000 n=8) |
+| MergeSort/items=100000-8      | 99999.000 ± 0%    | 1.000 ± 0%  -100.00% (p=0.000 n=8) |
+| MergeSort/items=1000000-8     | 1000000.500 ± 0%  | 1.000 ± 0%  -100.00% (p=0.000 n=8) |
+| MergeSort/items=10000000-8    | 10000002.500 ± 0% | 1.000 ± 0%  -100.00% (p=0.000 n=8) |
+| QuickSort/items=100-8         | 0.000 ± 0%        | 0.000 ± 0%         ~ (p=1.000 n=8) |
+| QuickSort/items=1000-8        | 0.000 ± 0%        | 0.000 ± 0%         ~ (p=1.000 n=8) |
+| QuickSort/items=10000-8       | 0.000 ± 0%        | 0.000 ± 0%         ~ (p=1.000 n=8) |
+| QuickSort/items=100000-8      | 0.000 ± 0%        | 0.000 ± 0%         ~ (p=1.000 n=8) |
+| QuickSort/items=1000000-8     | 0.000 ± 0%        | 0.000 ± 0%         ~ (p=1.000 n=8) |
+| QuickSort/items=10000000-8    | 0.000 ± 0%        | 0.000 ± 0%         ~ (p=1.000 n=8) |
+| RadixSort/items=100-8         | 3.000 ± 0%        | 1.000 ± 0%   -66.67% (p=0.000 n=8) |
+| RadixSort/items=1000-8        | 3.000 ± 0%        | 1.000 ± 0%   -66.67% (p=0.000 n=8) |
+| RadixSort/items=10000-8       | 3.000 ± 0%        | 1.000 ± 0%   -66.67% (p=0.000 n=8) |
+| RadixSort/items=100000-8      | 3.000 ± 0%        | 1.000 ± 0%   -66.67% (p=0.000 n=8) |
+| RadixSort/items=1000000-8     | 3.000 ± 0%        | 1.000 ± 0%   -66.67% (p=0.000 n=8) |
+| RadixSort/items=10000000-8    | 3.000 ± 0%        | 1.000 ± 0%   -66.67% (p=0.000 n=8) |
+| RadixSort/items=100000000-8   | 3.000 ± 0%        | 1.000 ± 0%   -66.67% (p=0.000 n=8) |
+| slices.Sort/items=100-8       |                   | 0.000 ± 0%                         |
+| slices.Sort/items=1000-8      |                   | 0.000 ± 0%                         |
+| slices.Sort/items=10000-8     |                   | 0.000 ± 0%                         |
+| slices.Sort/items=100000-8    |                   | 0.000 ± 0%                         |
+| slices.Sort/items=1000000-8   |                   | 0.000 ± 0%                         |
+| slices.Sort/items=10000000-8  |                   | 0.000 ± 0%                         |
+| slices.Sort/items=100000000-8 |                   | 0.000 ± 0%                         |
+| geomean                       |                   | -95.20%                            |
