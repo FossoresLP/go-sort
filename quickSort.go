@@ -13,7 +13,6 @@ func QuickSort[T cmp.Ordered](items []T) []T {
 	pivot := items[0]
 	i := 0
 	j := len(items) - 1
-	p := 0
 	for {
 		for items[i] < pivot {
 			i++
@@ -22,12 +21,12 @@ func QuickSort[T cmp.Ordered](items []T) []T {
 			j--
 		}
 		if i >= j {
-			p = j
-			break
+			QuickSort(items[:j+1])
+			QuickSort(items[j+1:])
+			return items
 		}
 		items[i], items[j] = items[j], items[i]
+		i++
+		j--
 	}
-	QuickSort(items[:p])
-	QuickSort(items[p+1:])
-	return items
 }
