@@ -2,6 +2,7 @@ package sort
 
 import (
 	"cmp"
+	"slices"
 )
 
 // MergeSort implements merge sort for all ordered primitive types.
@@ -43,6 +44,12 @@ func mergeSort[T cmp.Ordered](src, dst []T) {
 // MergeSortedSets merges two already sorted slices very efficiently.
 // It is used as part of merge sort but can also be useful when inserting multiple elements into a sorted slice (though the elements to insert first have to be sorted) or when combining the results of distributed sorting algoritms.
 func MergeSortedSets[T cmp.Ordered](a, b []T) []T {
+	if len(a) == 0 {
+		return slices.Clone(b)
+	}
+	if len(b) == 0 {
+		return slices.Clone(a)
+	}
 	buf := make([]T, len(a)+len(b))
 	mergeSortedSets(a, b, buf)
 	return buf
