@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"fmt"
 	"math"
-	"math/rand"
 	"slices"
 	"testing"
 )
@@ -33,7 +32,7 @@ func BenchmarkSort(b *testing.B) {
 					values := make([]uint64, i)
 					data := make([]uint64, i)
 					for k := range len(values) {
-						values[k] = rand.Uint64()
+						values[k] = random.Uint64()
 					}
 					for b.Loop() {
 						copy(data, values)
